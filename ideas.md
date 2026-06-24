@@ -15,4 +15,8 @@ features for my world cup map i want to add:
  FIFA rank, group, points, wins, draws, loses, goals, conceded, qualified, and also national anthem used and viewer chant
 
  
+to do right now: 
 
+- set up globe
+- set up smooth movement
+- set up countrys and sidebar
