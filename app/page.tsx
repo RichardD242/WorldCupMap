@@ -90,6 +90,12 @@ export default function Home() {
             Countries
           </Link>
           <Link
+            href="/knockout"
+            className="px-3 py-1 text-[11px] font-mono text-white bg-zinc-900 border border-zinc-600 hover:bg-zinc-700"
+          >
+            Knockout
+          </Link>
+          <Link
             href="/about"
             className="px-3 py-1 text-[11px] font-mono text-white bg-zinc-900 border border-zinc-600 hover:bg-zinc-700"
           >
