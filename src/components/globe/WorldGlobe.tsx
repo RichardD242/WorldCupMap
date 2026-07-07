@@ -4,47 +4,90 @@ import React, { useEffect, useRef, useState } from "react";
 import Globe from "react-globe.gl";
 import geoJsonData from "../custom.geo.json";
 
-export default function WorldGlobe() {
+interface WorldGlobeProps {
+    theme: 'night' | 'daylight' | 'plain';
+}
+
+const TEXTURES = [
+    '/textures/earth-night.jpg',
+    '/textures/earth-blue-marble.jpg',
+    '/textures/earth-topology.png',
+    '/textures/night-sky.png',
+];
+
+export default function WorldGlobe({ theme }: WorldGlobeProps) {
     const globeRef = useRef<any>(null);
     const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
     const [hoveredCountry, setHoveredCountry] = useState<any>(null);
+    const [globeKey, setGlobeKey] = useState(0);
+    const prevTheme = useRef(theme);
 
     useEffect(() => {
-        setDimensions({
-            width: window.innerWidth,
-            height: window.innerHeight,
-        });
+        if (prevTheme.current === 'plain' && theme !== 'plain') {
+            setGlobeKey(k => k + 1);
+        }
+        prevTheme.current = theme;
+    }, [theme]);
 
-        const handleResize = () => {
-            setDimensions({
-                width: window.innerWidth,
-                height: window.innerHeight,
-            });
-        };
+    useEffect(() => {
+        TEXTURES.forEach(url => { const img = new Image(); img.src = url; });
+
+        setDimensions({ width: window.innerWidth, height: window.innerHeight });
+
+        const handleResize = () =>
+            setDimensions({ width: window.innerWidth, height: window.innerHeight });
 
         window.addEventListener("resize", handleResize);
-
-        if (globeRef.current) {
-            globeRef.current.controls().autoRotate = true;
-            globeRef.current.controls().autoRotateSpeed = 0.2;
-        }
-
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    useEffect(() => {
+        const controls = globeRef.current?.controls?.();
+        if (controls) controls.autoRotate = !hoveredCountry;
+    }, [hoveredCountry]);
+
+    const getGlobeImages = () => {
+        switch (theme) {
+            case 'daylight':
+                return {
+                    globe: '/textures/earth-blue-marble.jpg',
+                    bump:  '/textures/earth-topology.png',
+                    bg:    '/textures/night-sky.png',
+                };
+            case 'plain':
+                return { globe: '', bump: '', bg: '' };
+            case 'night':
+            default:
+                return {
+                    globe: '/textures/earth-night.jpg',
+                    bump:  '/textures/earth-topology.png',
+                    bg:    '/textures/night-sky.png',
+                };
+        }
+    };
+
+    const images = getGlobeImages();
+
     return (
-        <div className="w-full h-screen bg-black flex items-center justify-center overflow-hidden">
+        <div className="w-full h-full bg-black flex items-center justify-center overflow-hidden">
             <Globe
+                key={globeKey}
                 ref={globeRef}
-                globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
-                bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
-                backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
+                globeImageUrl={images.globe}
+                bumpImageUrl={images.bump}
+                backgroundImageUrl={images.bg}
+                backgroundColor={theme === 'plain' ? '#1f2937' : '#000000'}
                 width={dimensions.width}
                 height={dimensions.height}
-
+                onGlobeReady={() => {
+                    const controls = globeRef.current?.controls?.();
+                    if (controls) {
+                        controls.autoRotate = true;
+                        controls.autoRotateSpeed = 0.2;
+                    }
+                }}
                 polygonsData={geoJsonData.features}
                 polygonsTransitionDuration={300}
-
                 polygonCapColor={(feat: any) =>
                     feat === hoveredCountry
                         ? "rgba(59, 130, 246, 0.85)"
@@ -67,11 +110,7 @@ export default function WorldGlobe() {
                     </div>
                 `}
                 onPolygonHover={(feat: any) => setHoveredCountry(feat)}
-                onPolygonClick={(feat: any) => {
-                    if (feat) {
-                        alert(`it works!`);
-                    }
-                }}
+                onPolygonClick={(_feat: any) => {}}
             />
         </div>
     );
