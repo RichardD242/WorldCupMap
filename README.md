@@ -1,7 +1,8 @@
 ![WCM](/public/wcm-banner.png)
 
-
-# World Cup Map
+<div align="center">
+    World Cup Map
+</div>
 
 ---
 
