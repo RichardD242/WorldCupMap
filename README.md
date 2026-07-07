@@ -46,3 +46,8 @@ npm run dev
 ### motivation
 
 i was very inspired by the ishowmap.com like the looks and the idea and applied it to the world cup. My goal was to color code the countries and see what countries are eliminated and so on
+
+### preview
+
+![World Cup Map Screenshot](/public/wcm1.png)
+![World Cup Countries Screesnhot](/public/wcm2.png)
