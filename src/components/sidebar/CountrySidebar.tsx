@@ -1,17 +1,23 @@
 "use client";
 
+import { TeamStatus } from "@/src/lib/worldcup";
+import { getFeatureIso2, getFeatureIso3 } from "@/src/lib/geo";
+
 interface CountrySidebarProps {
     country: any;
     onClose: () => void;
+    teamStatuses: Map<string, TeamStatus>;
 }
 
-export default function CountrySidebar({ country, onClose }: CountrySidebarProps) {
+export default function CountrySidebar({ country, onClose, teamStatuses }: CountrySidebarProps) {
     if (!country) return null;
 
     const props = country.properties ?? {};
     const name = props.NAME ?? props.ADMIN ?? "Unknown";
-    const iso2 = (props.ISO_A2 ?? "").toLowerCase();
+    const iso2 = getFeatureIso2(country).toLowerCase();
+    const iso3 = getFeatureIso3(country);
     const flagUrl = iso2 && iso2 !== "-99" ? `https://flagcdn.com/w320/${iso2}.png` : null;
+    const status = teamStatuses.get(iso2.toUpperCase());
 
     return (
         <div className="absolute top-12 right-0 bottom-0 z-20 w-72 bg-zinc-950 border-1 border-zinc-700 font-mono overflow-y-auto">
@@ -46,16 +52,43 @@ export default function CountrySidebar({ country, onClose }: CountrySidebarProps
 
                 {props.SUBREGION && (
                     <div>
-                        <span className="block text-[10px] uppercase tracking-widest text-zinc-500">region</span>
+                        <span className="block text-[10px] tracking-widest text-zinc-500">region</span>
                         <span className="block text-sm text-zinc-300">{props.SUBREGION}</span>
                     </div>
                 )}
 
-                {props.ISO_A3 && (
+                {iso3 && (
                     <div>
                         <span className="block text-[10px] tracking-widest text-zinc-500">national code:</span>
-                        <span className="block text-sm text-zinc-300">{props.ISO_A3}</span>
+                        <span className="block text-sm text-zinc-300">{iso3}</span>
                     </div>
+                )}
+
+                {status && (
+                    <>
+                        <div>
+                            <span className="block text-[10px] tracking-widest text-zinc-500">fifa rank</span>
+                            <span className="block text-sm text-zinc-300">#{status.ranking}</span>
+                        </div>
+
+                        <div>
+                            <span className="block text-[10px] tracking-widest text-zinc-500">group</span>
+                            <span className="block text-sm text-zinc-300">Group {status.group}</span>
+                        </div>
+
+                        <div>
+                            <span className="block text-[10px] tracking-widest text-zinc-500">status</span>
+                            {status.eliminated ? (
+                                <span className="block text-sm text-red-400">
+                                    Eliminated in {status.eliminatedStage}
+                                    {status.eliminatedOpponent && ` vs ${status.eliminatedOpponent}`}
+                                    {status.eliminatedScore && ` (${status.eliminatedScore})`}
+                                </span>
+                            ) : (
+                                <span className="block text-sm text-teal-400">Still in the tournament</span>
+                            )}
+                        </div>
+                    </>
                 )}
             </div>
         </div>
