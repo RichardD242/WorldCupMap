@@ -13,7 +13,8 @@ for my website it used the same globe, and it display all participant countriy w
 
 ## how to use
 
-- go to [worldcupmap]()
+- go to [worldcupmap](https://world-cup-map-rosy.vercel.app/)
+- to view about page [about](https://world-cup-map-rosy.vercel.app/)
 
 ### tech stack
 
