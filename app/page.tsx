@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import CountrySidebar from '@/src/components/sidebar/CountrySidebar';
 
 const WorldGlobe = dynamic(() => import('@/src/components/globe/WorldGlobe'), {
   ssr: false,
@@ -24,12 +25,13 @@ const THEMES: { id: Theme; label: string; desc: string }[] = [
 export default function Home() {
   const [theme, setTheme]       = useState<Theme>('night');
   const [settings, setSettings] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState<any>(null);
 
   return (
     <main className="w-screen h-screen overflow-hidden relative bg-black select-none font-mono">
 
       <div className="absolute inset-0 z-0">
-        <WorldGlobe theme={theme} />
+        <WorldGlobe theme={theme} selectedCountry={selectedCountry} onCountryClick={setSelectedCountry} />
       </div>
 
       <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-5 h-12 bg-black/60 backdrop-blur-sm border-b border-zinc-800/50">
@@ -55,6 +57,8 @@ export default function Home() {
           </Link>
         </div>
       </div>
+
+      <CountrySidebar country={selectedCountry} onClose={() => setSelectedCountry(null)} />
 
       {settings && (
         <div className="absolute top-12 right-5 z-10 w-52 bg-zinc-950 border border-zinc-700">

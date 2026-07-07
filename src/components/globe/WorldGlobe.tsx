@@ -6,6 +6,8 @@ import geoJsonData from "../custom.geo.json";
 
 interface WorldGlobeProps {
     theme: 'night' | 'daylight' | 'plain';
+    selectedCountry?: any;
+    onCountryClick?: (country: any) => void;
 }
 
 const TEXTURES = [
@@ -15,7 +17,7 @@ const TEXTURES = [
     '/textures/night-sky.png',
 ];
 
-export default function WorldGlobe({ theme }: WorldGlobeProps) {
+export default function WorldGlobe({ theme, selectedCountry, onCountryClick }: WorldGlobeProps) {
     const globeRef = useRef<any>(null);
     const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
     const [hoveredCountry, setHoveredCountry] = useState<any>(null);
@@ -88,21 +90,26 @@ export default function WorldGlobe({ theme }: WorldGlobeProps) {
                 }}
                 polygonsData={geoJsonData.features}
                 polygonsTransitionDuration={300}
+
                 polygonCapColor={(feat: any) =>
-                    feat === hoveredCountry
+                    feat === selectedCountry
+                        ? "rgba(34, 197, 94, 0.85)"
+                        : feat === hoveredCountry
                         ? "rgba(59, 130, 246, 0.85)"
                         : "rgba(30, 58, 138, 0.2)"
                 }
                 polygonSideColor={(feat: any) =>
-                    feat === hoveredCountry
+                    feat === selectedCountry
+                        ? "rgba(34, 197, 94, 0.4)"
+                        : feat === hoveredCountry
                         ? "rgba(59, 130, 246, 0.4)"
                         : "rgba(30, 58, 138, 0.08)"
                 }
                 polygonStrokeColor={(feat: any) =>
-                    feat === hoveredCountry ? "#93c5fd" : "#334155"
+                    feat === selectedCountry ? "#4ade80" : feat === hoveredCountry ? "#93c5fd" : "#334155"
                 }
                 polygonAltitude={(feat: any) =>
-                    feat === hoveredCountry ? 0.06 : 0.005
+                    feat === selectedCountry ? 0.08 : feat === hoveredCountry ? 0.06 : 0.005
                 }
                 polygonLabel={(feat: any) => `
                     <div style="background:rgba(0,0,0,0.75);padding:6px 12px;border-radius:6px;color:#fff;font-size:13px;font-family:monospace;border:1px solid rgba(59,130,246,0.4)">
@@ -110,7 +117,7 @@ export default function WorldGlobe({ theme }: WorldGlobeProps) {
                     </div>
                 `}
                 onPolygonHover={(feat: any) => setHoveredCountry(feat)}
-                onPolygonClick={(_feat: any) => {}}
+                onPolygonClick={(feat: any) => onCountryClick?.(feat)}
             />
         </div>
     );
