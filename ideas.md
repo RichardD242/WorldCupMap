@@ -20,3 +20,11 @@ to do right now:
 - set up globe
 - set up smooth movement
 - set up countrys and sidebar
+
+other stuff i could add:
+
+- upcoming matches
+- search for countries on the globe
+- maybe like from the remaining countries their team like players with pictures, trikot number, position
+- national anthem i forgot to add
+- maybe i should add 2d flat map next also
