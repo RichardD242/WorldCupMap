@@ -2,9 +2,13 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { useRef } from 'react';
 import CountrySidebar from '@/src/components/sidebar/CountrySidebar';
+import CountrySearch from '@/src/components/CountrySearch';
 import { HOST_ISO2 } from '@/src/lib/worldcup';
 import { useWorldCupMap, Theme } from '@/src/hooks/useWorldCupMap';
+import type { WorldGlobeHandle } from '@/src/components/globe/WorldGlobe';
+import type { WorldMap2DHandle } from '@/src/components/globe/WorldMap2D';
 
 const WorldGlobe = dynamic(() => import('@/src/components/globe/WorldGlobe'), {
   ssr: false,
@@ -45,6 +49,15 @@ export default function MapPage({ mode }: { mode: '2d' | '3d' }) {
     remainingIso2,
   } = useWorldCupMap();
 
+  const globeRef = useRef<WorldGlobeHandle>(null);
+  const map2dRef = useRef<WorldMap2DHandle>(null);
+
+  const handleSearchSelect = (feat: any) => {
+    setSelectedCountry(feat);
+    globeRef.current?.focusOn(feat);
+    map2dRef.current?.focusOn(feat);
+  };
+
   const mapProps = {
     theme,
     selectedCountry,
@@ -63,8 +76,10 @@ export default function MapPage({ mode }: { mode: '2d' | '3d' }) {
     <main className="w-screen h-screen overflow-hidden relative bg-black select-none font-mono">
 
       <div className="absolute inset-0 z-0">
-        {mode === '3d' ? <WorldGlobe {...mapProps} /> : <WorldMap2D {...mapProps} />}
+        {mode === '3d' ? <WorldGlobe ref={globeRef} {...mapProps} /> : <WorldMap2D ref={map2dRef} {...mapProps} />}
       </div>
+
+      <CountrySearch onSelect={handleSearchSelect} />
 
       <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-5 h-12 bg-black/60 backdrop-blur-sm border-b border-zinc-800/50">
         <div className="flex items-center gap-3">

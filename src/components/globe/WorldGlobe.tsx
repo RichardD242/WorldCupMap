@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import Globe from "react-globe.gl";
+import { geoCentroid } from "d3-geo";
 import geoJsonData from "../custom.geo.json";
 import { getFeatureIso2 } from "@/src/lib/geo";
 
@@ -19,6 +20,10 @@ interface WorldGlobeProps {
     participatingIso2?: Set<string>;
 }
 
+export interface WorldGlobeHandle {
+    focusOn: (feat: any) => void;
+}
+
 const TEXTURES = [
     '/textures/earth-night.jpg',
     '/textures/earth-blue-marble.jpg',
@@ -26,7 +31,7 @@ const TEXTURES = [
     '/textures/night-sky.png',
 ];
 
-export default function WorldGlobe({
+const WorldGlobe = forwardRef<WorldGlobeHandle, WorldGlobeProps>(function WorldGlobe({
     theme,
     selectedCountry,
     onCountryClick,
@@ -38,12 +43,19 @@ export default function WorldGlobe({
     remainingIso2,
     showPlayingCountries,
     participatingIso2,
-}: WorldGlobeProps) {
+}, ref) {
     const globeRef = useRef<any>(null);
     const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
     const [hoveredCountry, setHoveredCountry] = useState<any>(null);
     const [globeKey, setGlobeKey] = useState(0);
     const prevTheme = useRef(theme);
+
+    useImperativeHandle(ref, () => ({
+        focusOn: (feat: any) => {
+            const [lng, lat] = geoCentroid(feat);
+            globeRef.current?.pointOfView({ lat, lng, altitude: 1.5 }, 1000);
+        },
+    }));
 
     useEffect(() => {
         if (prevTheme.current === 'plain' && theme !== 'plain') {
@@ -111,8 +123,11 @@ export default function WorldGlobe({
                 onGlobeReady={() => {
                     const controls = globeRef.current?.controls?.();
                     if (controls) {
-                        controls.autoRotate = true;
+                        controls.autoRotate = false;
                         controls.autoRotateSpeed = 0.2;
+                        setTimeout(() => {
+                            controls.autoRotate = !hoveredCountry;
+                        }, 200);
                     }
                 }}
                 polygonsData={geoJsonData.features}
@@ -182,4 +197,6 @@ export default function WorldGlobe({
             />
         </div>
     );
-}
+});
+
+export default WorldGlobe;

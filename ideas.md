@@ -34,3 +34,7 @@ today:
 - flat map mode
 - player platform - the basic is done, i could also add like player cards
 - upcoming matches and recent matches
+
+add to sidebar: wins, losses, ties
+
+a search function at the top the bar or new pill bar
