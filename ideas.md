@@ -28,3 +28,9 @@ other stuff i could add:
 - maybe like from the remaining countries their team like players with pictures, trikot number, position
 - national anthem i forgot to add
 - maybe i should add 2d flat map next also
+
+today:
+
+- flat map mode
+- player platform
+- upcoming matches and recent matches
