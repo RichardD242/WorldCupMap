@@ -16,7 +16,7 @@ export default function PlayerPage() {
 
             <div className="mx-auto max-w-4xl px-4 py-10">
                 <div className="mb-10 text-center">
-                    <h1 className="text-3xl font-bold text-white">players (right now only france and czechia)</h1>
+                    <h1 className="text-3xl font-bold text-white">players</h1>
                     <p className="mt-2 text-white/60">select country to see players</p>
                 </div>
 
@@ -28,7 +28,7 @@ export default function PlayerPage() {
                             className="group flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.05] p-6 transition-colors hover:border-yellow-400/40 hover:bg-yellow-400/10"
                         >
                             <img
-                                src={flagUrl(country.code)}
+                                src={flagUrl(country.flagCode ?? country.code)}
                                 alt={country.name}
                                 className="h-16 w-28 rounded object-cover shadow-lg"
                                 loading="lazy"
