@@ -32,5 +32,5 @@ other stuff i could add:
 today:
 
 - flat map mode
-- player platform
+- player platform - the basic is done, i could also add like player cards
 - upcoming matches and recent matches

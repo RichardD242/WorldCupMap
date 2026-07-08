@@ -2,7 +2,7 @@ const DATA_BASE = "https://raw.githubusercontent.com/26worldcup/26worldcup.githu
 
 export const HOST_ISO2 = new Set(["US", "MX", "CA"]);
 
-const STAGE_LABELS: Record<string, string> = {
+export const STAGE_LABELS: Record<string, string> = {
     group: "Group Stage",
     r32: "Round of 32",
     r16: "Round of 16",
@@ -12,8 +12,10 @@ const STAGE_LABELS: Record<string, string> = {
     final: "Final",
 };
 
-type Team = { code: string; iso2: string; group: string; ranking: number };
+type Team = { code: string; iso2: string; group: string; ranking: number; name: { en: string } };
 type TeamsResponse = { teams: Record<string, Team> };
+
+export type TeamMeta = { code: string; name: string; iso2: string };
 
 type StandingEntry = { code: string; rank: number };
 type ThirdEntry = { code: string; qualifies: boolean };
@@ -25,6 +27,7 @@ type StandingsResponse = {
 
 type MatchSide = { code: string; score: number | null; pen: number | null };
 type Match = {
+    id: string;
     stage: string;
     status: string;
     winner: string | null;
@@ -32,6 +35,41 @@ type Match = {
     away: MatchSide;
 };
 type MatchesResponse = { matches: Match[] };
+export type MatchInfo = Match & { stageLabel: string };
+
+export async function fetchMatches(): Promise<MatchInfo[]> {
+    const res = await fetchJson<MatchesResponse>("matches.json");
+    return res.matches.map((match) => ({
+        ...match,
+        stageLabel: STAGE_LABELS[match.stage] ?? match.stage,
+    }));
+}
+
+export function getRecentMatches(matches: MatchInfo[], count = 5): MatchInfo[] {
+    return matches
+        .filter((match) => match.status === "finished")
+        .sort((a, b) => new Date(b.id).getTime() - new Date(a.id).getTime())
+        .slice(0, count);
+}
+
+export function getUpcomingMatches(matches: MatchInfo[], count = 5): MatchInfo[] {
+    const now = Date.now();
+    return matches
+        .filter((match) => match.status !== "finished" && new Date(match.id).getTime() > now)
+        .sort((a, b) => new Date(a.id).getTime() - new Date(b.id).getTime())
+        .slice(0, count);
+}
+
+export async function fetchTeamMeta(): Promise<Map<string, TeamMeta>> {
+    const res = await fetchJson<TeamsResponse>("teams.json");
+    return new Map(
+        Object.values(res.teams).map((team) => [
+            team.code,
+            { code: team.code, name: team.name.en, iso2: team.iso2.split("-")[0].toLowerCase() },
+        ])
+    );
+}
+
 
 export type TeamStatus = {
     code: string;
@@ -81,7 +119,7 @@ export async function fetchTeamStatuses(): Promise<Map<string, TeamStatus>> {
         knockoutExit.set(loserSide.code, {
             stage: STAGE_LABELS[match.stage] ?? match.stage,
             score: formatScore(winnerSide, loserSide),
-            opponent: winnerSide.code,
+            opponent: teamsRes.teams[winnerSide.code]?.name.en ?? winnerSide.code,
         });
     }
 
