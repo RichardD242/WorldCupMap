@@ -38,3 +38,5 @@ today:
 add to sidebar: wins, losses, ties
 
 a search function at the top the bar or new pill bar
+
+top scorers like with cool cards

@@ -14,7 +14,16 @@ for my website it used the same globe, and it display all participant countriy w
 ## how to use
 
 - go to [worldcupmap](https://world-cup-map-rosy.vercel.app/)
-- to view about page [about](https://world-cup-map-rosy.vercel.app/)
+- to view about page [about](https://world-cup-map-rosy.vercel.app/about)
+
+other subpages:
+
+ /2d - goes to [2d mode](https://world-cup-map-rosy.vercel.app/)
+ /countries - goes to [all countries](https://world-cup-map-rosy.vercel.app/countries)
+ /knockout - goes to [the ko-table](https://world-cup-map-rosy.vercel.app/knockout)
+ /matches - goes to [recent and upcomming matches](https://world-cup-map-rosy.vercel.app/matches)
+ /players - goes to [teams and players](https://world-cup-map-rosy.vercel.app/players)
+ /topscorers - goes to [players with most goals this wc](https://world-cup-map-rosy.vercel.app/topscorers)
 
 ### tech stack
 

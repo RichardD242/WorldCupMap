@@ -141,6 +141,12 @@ export default function MapPage({ mode }: { mode: '2d' | '3d' }) {
             Matches
           </Link>
           <Link
+            href="/topscorers"
+            className="px-3 py-1 text-[11px] font-mono text-white bg-zinc-900 border border-zinc-600 hover:bg-zinc-700"
+          >
+            Topscorers
+          </Link>
+          <Link
             href="/about"
             className="px-3 py-1 text-[11px] font-mono text-white bg-zinc-900 border border-zinc-600 hover:bg-zinc-700"
           >
